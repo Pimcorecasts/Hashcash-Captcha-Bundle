@@ -1,6 +1,6 @@
 {
-  "name": "pimcorecasts/hash-cash-form-bundle",
-  "description": "Pimcorecasts Hash Cash Forms",
+  "name": "pimcorecasts/hash-cash-captcha-bundle",
+  "description": "Pimcorecasts Hashcash Captcha",
   "type": "pimcore-bundle",
   "license": "GPL-3.0",
   "require": {

@@ -55,22 +55,25 @@ class HashCashService
             $this->hashcashSalt = $params->get( 'secret' );
         }
 
-        $this->currentRequest = $this->requestStack->getCurrentRequest();
+        try {
+            $this->currentRequest = $this->requestStack->getCurrentRequest();
+        } catch {\Throwable $e) {
+            // do nothing
+        }
     }
-
 
     /**
      * todo: Check and update function
      *
      * @return bool
      */
-    public function validateProcessFrom() : bool
+    public function validateHashcashCaptcha() : bool
     {
         $formError = '';
 
         if( !$this->checkStamp() ){
             $formError = 'pchc.invalid.try-again';
-            $this->flashBag->add( 'pchc_error', $formError);
+            $this->addFlashbagMessage( 'pchc_error', $formError);
         }
 
         if( $formError != '' ){
@@ -78,11 +81,24 @@ class HashCashService
         }
 
         // log that this puzzle has been used
-        $postStamp = $this->currentRequest->get('pchc_stamp' );
+        $postStamp = $this->getRequestParam('pchc_stamp' );
         TmpStore::add( $this->tmpStorePrefix . $postStamp, $postStamp, 'pchc', 3600);
 
         // Form submission validated; send message
         return true;
+    }
+
+    private function getRequestParam(string $name, $defaultValue) {
+        if (isset($this->currentRequest) && $this->currentRequest != '') {
+            return $this->currentRequest->get($name, $defaultValue);
+        }
+        return $defaultValue;
+    }
+
+    private function addFlashbagMessage(string $type, string $message) {
+        if (isset($this->flashBag) && $this->flashBag != '') {
+            $this->flashBag->add($type, $message);
+        }
     }
 
     /**
@@ -92,7 +108,7 @@ class HashCashService
      */
     private function getClientIp() : string
     {
-        $clientIp = $this->requestStack->getCurrentRequest()->getClientIp();
+        $clientIp = $this->requestStack?->getCurrentRequest()?->getClientIp();
         if( $clientIp ){
             return $clientIp;
         }
@@ -144,7 +160,7 @@ class HashCashService
         return [
             'pchc_stamp' => $stamp,
             'pchc_difficulty' => $this->hashcashDifficulty,
-            'pchc_nonce' => ( $this->currentRequest->get('pchc_nonce', false) && $this->checkStamp() ) ? $this->currentRequest->get('pchc_nonce') : ''
+            'pchc_nonce' => ( $this->getRequestParam('pchc_nonce', false) && $this->checkStamp() ) ? $this->getRequestParam('pchc_nonce') : ''
         ];
     }
 
@@ -170,7 +186,7 @@ class HashCashService
         }
 
         //p_r( "stamp expired" );
-        $this->flashBag->add( 'pchc_error', 'pchc.stamp.expired');
+        $this->addFlashbagMessage( 'pchc_error', 'pchc.stamp.expired');
         return false;
     }
 
@@ -203,9 +219,16 @@ class HashCashService
      */
     private function checkStamp() : bool
     {
-        $stamp = $this->currentRequest->get( 'pchc_stamp');
-        $client_difficulty = $this->currentRequest->get('pchc_difficulty');
-        $nonce = $this->currentRequest->get( 'pchc_nonce' );
+        $stamp = $this->getRequestParam( 'pchc_stamp');
+
+        // check if this puzzle has already been used to submit a message
+        if( TmpStore::get( $this->tmpStorePrefix . $stamp) ){
+            $this->addFlashbagMessage( 'pchc_error', "pchc.puzzle-is-already-used");
+            return false;
+        }
+
+        $client_difficulty = $this->getRequestParam('pchc_difficulty');
+        $nonce = $this->getRequestParam( 'pchc_nonce' );
 
         /*
         p_r( "stamp: $stamp" );
@@ -219,32 +242,21 @@ class HashCashService
         };
 
         $expectedLength = strlen( $this->hashString( hashString: uniqid() ) );
-        //p_r( "stamp size: " . strlen( $stamp ) . " expected: $expectedLength" );
         if( strlen( $stamp ) != $expectedLength ){
-            //$this->flashBag->add( 'pchc_error', 'pchc.stamp-length');
+            //$this->addFlashbagMessage( 'pchc_error', 'pchc.stamp-length');
             return false;
         }
 
-        if( $this->checkExpiration( stamp: $stamp ) ){
-            //p_r( "PoW puzzle has not expired" );
-        }else{
-            //p_r( "PoW puzzle expired" );
-            $this->flashBag->add( 'pchc_error', 'pchc.puzzle-expired');
+        if( !$this->checkExpiration( stamp: $stamp ) ){
+            // PoW puzzle expired
+            $this->addFlashbagMessage( 'pchc_error', 'pchc.puzzle-expired');
             return false;
         }
 
         // check the actual PoW
-        if( $this->checkProofOfWork( difficulty: $this->hashcashDifficulty, stamp: $stamp, nonce: $nonce ) ){
-            //p_r( "Difficulty target met." );
-        }else{
-            //p_r( "Difficulty target was not met." );
-            $this->flashBag->add( 'pchc_error', 'pchc.generic-error');
-            return false;
-        }
-
-        // check if this puzzle has already been used to submit a message
-        if( TmpStore::get( $this->tmpStorePrefix . $stamp) ){
-            $this->flashBag->add( 'pchc_error', "pchc.puzzle-is-already-used");
+        if( !$this->checkProofOfWork( difficulty: $this->hashcashDifficulty, stamp: $stamp, nonce: $nonce ) ){
+            // Difficulty target was not met.
+            $this->addFlashbagMessage( 'pchc_error', 'pchc.generic-error');
             return false;
         }
 

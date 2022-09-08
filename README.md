@@ -1,13 +1,15 @@
-# Pimcorecasts Hash Cash Form
-This Bundle is an alternative to Googles Recaptcha.  
-The js file calculates from a Hash
+# Hashcash Captcha Bundle
+
+This bundle is a local alternative to Google's Recaptcha and FriendlyCaptcha using a proof-of-work approach with the hashcash algorithm. 
+This bundle is inspired by https://github.com/jlopp/hashcash-form-protect
+The js file calculates a hashcash token from a hash which is then validated by the server.
 
 Defaults:
 - stamp expire: 10 min
 
 ## Installation
 ```shell
-composer require pimcorecasts/hash-cache-form-bundle
+composer require pimcorecasts/hash-cash-captcha-bundle
 ```
 
 ## Activation
@@ -36,7 +38,7 @@ class: `.pchc-form`
 ### 4. Validate the Hash on Submit on the Server side
 Validate first your mandatory fields and at the end you can verify the hashCash.
 ```php
-$validHashCash = $hashCashService->validateProcessFrom();
+$validHashCash = $hashCashService->validateHashcashCaptcha();
 ```
 
 ### 5. Show error flash messages
