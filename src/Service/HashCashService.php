@@ -95,7 +95,7 @@ class HashCashService
      * @param [type] $defaultValue
      * @return void
      */
-    private function getRequestParam(string $name, $defaultValue) {
+    private function getRequestParam(string $name, $defaultValue = null) : mixed {
         if (isset($this->currentRequest) && $this->currentRequest != '') {
             return $this->currentRequest->get($name, $defaultValue);
         }
@@ -109,7 +109,7 @@ class HashCashService
      * @param string $message
      * @return void
      */
-    private function addFlashbagMessage(string $type, string $message) {
+    private function addFlashbagMessage(string $type, string $message): void {
         if (isset($this->flashBag) && $this->flashBag != '') {
             $this->flashBag->add($type, $message);
         }
