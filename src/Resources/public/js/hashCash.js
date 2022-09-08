@@ -190,15 +190,12 @@ var pimcorecastsHashCash = {
         var newAction = form.getAttribute('data-action');
         if (newAction) {
             form.action = newAction;
-        } else {
-            form.action = '';
         }
 
         // check to see if we already found a solution
         var form_nonce = pimcorecastsHashCash.getFormData(form, 'pchc_nonce');
         if (form_nonce && pimcorecastsHashCash.checkNonce(pchc_difficulty, pchc_stamp, form_nonce)) {
             // we have a valid nonce; submit the form
-            form.submit()
             //document.getElementById('submitbutton').disabled = false;
             return true;
         }
@@ -221,7 +218,6 @@ var pimcorecastsHashCash = {
 
         // we have a valid nonce; enable the form submit button
         // document.getElementById('countdown').innerHTML = "a";
-        form.submit()
 
         return true;
     }
@@ -246,12 +242,30 @@ window.addEventListener('load', (event) => {
                     el.setAttribute('disabled', true)
                 } )
 
-                pimcorecastsHashCash.findHash(submittedForm).then( () => {
-                    console.log('All clear ... ready to take of')
+                pimcorecastsHashCash.findHash(submittedForm).then( ( isValid ) => {
+                    var customEvent = new CustomEvent('hashcashFormValid', {
+                        bubbles: true,
+                        detail: {
+                            valid: isValid,
+                            submitForm: true
+                        }
+                    })
+                    submittedForm.dispatchEvent(customEvent)
+
+                    if (customEvent.detail.submitForm && customEvent.detail.valid) {
+                        submittedForm.submit();
+                    }
                 } )
 
             })
 
         }
     )
+    
+    /* example
+    document.addEventListener('hashcashFormValid', (event) => {
+        event.detail.submitForm = false
+        console.log(event)
+    })
+    */
 })

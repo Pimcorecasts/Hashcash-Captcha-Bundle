@@ -88,6 +88,13 @@ class HashCashService
         return true;
     }
 
+    /**
+     * Request Params
+     *
+     * @param string $name
+     * @param [type] $defaultValue
+     * @return void
+     */
     private function getRequestParam(string $name, $defaultValue) {
         if (isset($this->currentRequest) && $this->currentRequest != '') {
             return $this->currentRequest->get($name, $defaultValue);
@@ -95,6 +102,13 @@ class HashCashService
         return $defaultValue;
     }
 
+    /**
+     * Add Flashbag Messages
+     *
+     * @param string $type
+     * @param string $message
+     * @return void
+     */
     private function addFlashbagMessage(string $type, string $message) {
         if (isset($this->flashBag) && $this->flashBag != '') {
             $this->flashBag->add($type, $message);

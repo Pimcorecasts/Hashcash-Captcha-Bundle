@@ -54,6 +54,19 @@ Then there runs the validation and if there is an error you get all Error's as `
 {% endif %}
 ```
 
+### Custom Result Handling Event
+```js
+document.addEventListener('hashcashFormValid', (event) => {
+    
+    // Disable automatic form submit
+    event.detail.submitForm = false
+
+    // custom checks if form should submit
+    event.detail.valid = false
+    
+})
+```
+
 
 ## Flash Messages for Error handling
 - typ: pchc_error
