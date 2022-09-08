@@ -187,11 +187,6 @@ var pimcorecastsHashCash = {
         var pchc_stamp = pimcorecastsHashCash.getFormData(form, 'pchc_stamp');
         var pchc_difficulty = pimcorecastsHashCash.getFormData(form, 'pchc_difficulty');
 
-        var newAction = form.getAttribute('data-action');
-        if (newAction) {
-            form.action = newAction;
-        }
-
         // check to see if we already found a solution
         var form_nonce = pimcorecastsHashCash.getFormData(form, 'pchc_nonce');
         if (form_nonce && pimcorecastsHashCash.checkNonce(pchc_difficulty, pchc_stamp, form_nonce)) {
@@ -243,6 +238,13 @@ window.addEventListener('load', (event) => {
                 } )
 
                 pimcorecastsHashCash.findHash(submittedForm).then( ( isValid ) => {
+                    var newAction = submittedForm.getAttribute('data-action')
+                    var hasActionAttr = submittedForm.hasAttribute('data-action')
+
+                    if (hasActionAttr) {
+                        submittedForm.action = newAction;
+                    }
+
                     var customEvent = new CustomEvent('hashcashFormValid', {
                         bubbles: true,
                         detail: {
@@ -261,7 +263,7 @@ window.addEventListener('load', (event) => {
 
         }
     )
-    
+
     /* example
     document.addEventListener('hashcashFormValid', (event) => {
         event.detail.submitForm = false
