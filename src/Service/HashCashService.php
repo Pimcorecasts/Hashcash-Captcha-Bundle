@@ -57,7 +57,7 @@ class HashCashService
 
         try {
             $this->currentRequest = $this->requestStack->getCurrentRequest();
-        } catch {\Throwable $e) {
+        } catch (\Throwable $e) {
             // do nothing
         }
     }
