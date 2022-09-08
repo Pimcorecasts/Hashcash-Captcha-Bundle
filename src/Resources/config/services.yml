@@ -1,0 +1,28 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # auto-register all controllers as services
+    Pimcorecasts\Bundle\HashCash\Service\HashCashService:
+        public: true
+        tags: ['controller.service_arguments']
+
+    # auto-register all controllers as services
+    Pimcorecasts\Bundle\HashCash\Twig\HashCashExtension:
+        public: true
+        tags: ['twig.extension']
+
+    #
+    # SECURITY
+    #
+
+    #
+    # TEMPLATING
+    #
+
+    # auto-register all Helpers as services
+#    Pimcorecasts\Bundle\StyleLabBundle\Services\:
+#        public: true
+#        resource: '../../Services'

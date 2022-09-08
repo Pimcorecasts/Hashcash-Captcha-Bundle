@@ -1,0 +1,21 @@
+{
+  "name": "pimcorecasts/hash-cash-form-bundle",
+  "description": "Pimcorecasts Hash Cash Forms",
+  "type": "pimcore-bundle",
+  "license": "GPL-3.0",
+  "require": {
+    "pimcore/pimcore": ">=10"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pimcorecasts\\Bundle\\HashCash\\": "src/"
+    }
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "Pimcorecasts\\Bundle\\HashCash\\HashCashBundle"
+      ]
+    }
+  }
+}
