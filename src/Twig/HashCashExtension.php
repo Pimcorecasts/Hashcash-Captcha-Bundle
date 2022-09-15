@@ -8,7 +8,7 @@
 
 namespace Pimcorecasts\Bundle\HashCash\Twig;
 
-use Pimcorecasts\Bundle\HashCashBundle\Service\HashCashService;
+use Pimcorecasts\Bundle\HashCash\Service\HashCashService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
