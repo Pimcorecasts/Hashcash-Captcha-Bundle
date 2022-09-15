@@ -13,7 +13,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 
-class HashCashExtension extends AbstractExtension
+class HashCashTwigExtension extends AbstractExtension
 {
 
     public function __construct( protected HashCashService $cashService )

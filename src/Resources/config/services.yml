@@ -10,7 +10,7 @@ services:
         tags: ['controller.service_arguments']
 
     # auto-register all controllers as services
-    Pimcorecasts\Bundle\HashCash\Twig\HashCashExtension:
+    Pimcorecasts\Bundle\HashCash\Twig\HashCashTwigExtension:
         public: true
         tags: ['twig.extension']
 
