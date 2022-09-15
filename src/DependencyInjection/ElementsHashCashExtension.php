@@ -17,7 +17,7 @@ class PimcorecastsHashCashExtension extends Extension
      */
     public function load( array $configs, ContainerBuilder $container): void
     {
-        // load config data from 'pimcorecasts_log_analytics' config tree
+        // load config data from 'pimcorecasts_hashcash_captcha' config tree
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 

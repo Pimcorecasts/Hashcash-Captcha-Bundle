@@ -14,7 +14,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('pimcorecasts_hash_cash_form');
+        $treeBuilder = new TreeBuilder('pimcorecasts_hashcash_captcha');
         return $treeBuilder;
     } //: getConfigTreeBuilder
 }
