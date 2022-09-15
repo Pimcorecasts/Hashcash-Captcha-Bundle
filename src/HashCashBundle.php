@@ -10,9 +10,9 @@ class HashCashBundle extends AbstractPimcoreBundle
     public function getVersion()
     {
         try{
-            $version = \Composer\InstalledVersions::getVersion('pimcorecasts/hashcash-form-bundle');
+            $version = \Composer\InstalledVersions::getVersion('pimcorecasts/hash-cash-captcha-bundle');
         }catch( \Exception $e ){
-            $version = \PackageVersions\Versions::getVersion( 'pimcorecasts/hashcash-form-bundle' );
+            $version = \PackageVersions\Versions::getVersion( 'pimcorecasts/hash-cash-captcha-bundle' );
         }
 
         return $version;
