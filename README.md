@@ -22,7 +22,7 @@ Pimcorecasts\Bundle\HashCash\HashCashBundle::class => [ 'all' => true ],
 
 ### 1. Include the `.js` file
 ```php
-<script src="/bundles/pimcorecastshashcash/js/hashCash.js">
+<script src="/bundles/hashcash/js/hashCash.js">
 ```
 
 ### 2. Add class to your `submit` button
