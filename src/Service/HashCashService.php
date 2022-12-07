@@ -49,7 +49,7 @@ class HashCashService
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __construct( private ContainerBagInterface $params, private RequestStack $requestStack, private FlashBagInterface $flashBag, protected string $hashcashSalt = '' )
+    public function __construct( private ContainerBagInterface $params, private RequestStack $requestStack, protected string $hashcashSalt = '' )
     {
         if( $hashcashSalt == '' ){
             $this->hashcashSalt = $params->get( 'secret' );
@@ -60,6 +60,14 @@ class HashCashService
         } catch (\Throwable $e) {
             // do nothing
         }
+    }
+
+    protected $flashBag = null;
+    protected function getFlashBag() {
+        if ($this->flashBag === null) {
+            $this->flashBag = $this->requestStack->getSession()->getFlashBag();
+        }
+        return $this->flashBag;
     }
 
     /**
@@ -110,8 +118,8 @@ class HashCashService
      * @return void
      */
     private function addFlashbagMessage(string $type, string $message): void {
-        if (isset($this->flashBag) && $this->flashBag != '') {
-            $this->flashBag->add($type, $message);
+        if ($this->getFlashBag() != '') {
+            $this->getFlashBag()->add($type, $message);
         }
     }
 
