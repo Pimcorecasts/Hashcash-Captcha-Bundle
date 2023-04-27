@@ -25,7 +25,7 @@ Pimcorecasts\Bundle\HashCash\HashCashBundle::class => [ 'all' => true ],
 <script src="/bundles/hashcash/js/hashCash.js">
 ```
 
-### 2. Add class to your `submit` button
+### 2. Add class to your `form` tag
 class: `.pchc-form`
 
 ### 3. Add in your Form the HashCash inputs
