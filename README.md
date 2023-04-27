@@ -44,10 +44,11 @@ $validHashCash = $hashCashService->validateHashcashCaptcha();
 ### 5. Show error flash messages
 This Helper takes the `currentRequest` and search for the HashCash fields.  
 Then there runs the validation and if there is an error you get all Error's as `Flash Message` back.
-```php
-{% if app.session.flashBag.get('pchc_error') %}
+```twig
+{% set pchcErrors = app.session.flashBag.get('pchc_error') %}
+{% if pchcErrors is not empty %}
     <ul>
-    {% for message in  app.session.flashBag.get('pchc_error') %}
+    {% for message in pchcErrors %}
         <li>{{ message }}</li>
     {% endfor %}
     </ul>
