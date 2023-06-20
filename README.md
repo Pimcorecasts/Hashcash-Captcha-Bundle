@@ -55,6 +55,18 @@ Then there runs the validation and if there is an error you get all Error's as `
 {% endif %}
 ```
 
+## Configuration
+You can edit the valid stamp time and the difficulty via setters in the template.
+```twig
+{# edit the difficulty #}
+{% do pc_hash_cash().setHashcashDifficulty(15) %}
+
+{# edit the time-range the stamp will be valid #}
+{# increase for e.g. job application site #}
+{% do pc_hash_cash().setHashcashTimeWindow(20) %}
+```
+
+
 ### Custom Result Handling Event
 ```js
 document.addEventListener('hashcashFormValid', (event) => {
@@ -70,7 +82,7 @@ document.addEventListener('hashcashFormValid', (event) => {
 
 
 ## Flash Messages for Error handling
-- typ: pchc_error
+- type: pchc_error
 
 ### Messages:
 **If the `checkStamp` gets an Error**

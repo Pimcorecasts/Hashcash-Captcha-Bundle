@@ -43,14 +43,35 @@ class HashCashService
     protected string $tmpStorePrefix = 'pc-hc-';
 
     /**
+     * @param int $hashcashDifficulty
+     */
+    public function setHashcashDifficulty(int $hashcashDifficulty): void
+    {
+        $this->hashcashDifficulty = $hashcashDifficulty;
+    }
+
+    /**
+     * @param int $hashcashTimeWindow
+     */
+    public function setHashcashTimeWindow(int $hashcashTimeWindow): void
+    {
+        $this->hashcashTimeWindow = $hashcashTimeWindow;
+    }
+
+
+    /**
      * @param ContainerBagInterface $params
      * @param RequestStack $requestStack
      * @param string $hashcashSalt
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __construct( private ContainerBagInterface $params, private RequestStack $requestStack, protected string $hashcashSalt = '' )
-    {
+    public function __construct( 
+        private ContainerBagInterface $params, 
+        private RequestStack $requestStack,
+        private EventDispatcherInterface $dispatcher,
+        protected string $hashcashSalt = '' 
+    ){
         if( $hashcashSalt == '' ){
             $this->hashcashSalt = $params->get( 'secret' );
         }
@@ -242,35 +263,23 @@ class HashCashService
     private function checkStamp() : bool
     {
         $stamp = $this->getRequestParam( 'pchc_stamp');
-
-        // check if this puzzle has already been used to submit a message
-        if( TmpStore::get( $this->tmpStorePrefix . $stamp) ){
-            $this->addFlashbagMessage( 'pchc_error', "pchc.puzzle-is-already-used");
-            return false;
-        }
-
         $client_difficulty = $this->getRequestParam('pchc_difficulty');
         $nonce = $this->getRequestParam( 'pchc_nonce' );
 
-        /*
-        p_r( "stamp: $stamp" );
-        p_r( "difficulty: $client_difficulty" );
-        p_r( "nonce: $nonce" );
-
-        p_r( "difficulty comparison: $client_difficulty vs " . $this->hashcashDifficulty );
-        */
         if( $client_difficulty != $this->hashcashDifficulty ){
+            $this->dispatcher->dispatch(new HashCashInvalidEvent('pchc.different-difficulty'));
             return false;
         };
 
         $expectedLength = strlen( $this->hashString( hashString: uniqid() ) );
         if( strlen( $stamp ) != $expectedLength ){
-            //$this->addFlashbagMessage( 'pchc_error', 'pchc.stamp-length');
+            $this->dispatcher->dispatch(new HashCashInvalidEvent('pchc.stamp-length'));
             return false;
         }
 
         if( !$this->checkExpiration( stamp: $stamp ) ){
             // PoW puzzle expired
+            $this->dispatcher->dispatch(new HashCashInvalidEvent('pchc.puzzle-expired'));
             $this->addFlashbagMessage( 'pchc_error', 'pchc.puzzle-expired');
             return false;
         }
@@ -278,7 +287,15 @@ class HashCashService
         // check the actual PoW
         if( !$this->checkProofOfWork( difficulty: $this->hashcashDifficulty, stamp: $stamp, nonce: $nonce ) ){
             // Difficulty target was not met.
+            $this->dispatcher->dispatch(new HashCashInvalidEvent('pchc.generic-error'));
             $this->addFlashbagMessage( 'pchc_error', 'pchc.generic-error');
+            return false;
+        }
+
+        // check if this puzzle has already been used to submit a message
+        if( TmpStore::get( $this->tmpStorePrefix . $stamp) ){
+            $this->dispatcher->dispatch(new HashCashInvalidEvent('pchc.puzzle-is-already-used'));
+            $this->addFlashbagMessage( 'pchc_error', "pchc.puzzle-is-already-used");
             return false;
         }
 
