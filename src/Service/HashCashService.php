@@ -13,7 +13,6 @@ use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 class HashCashService
 {
@@ -69,7 +68,6 @@ class HashCashService
     public function __construct( 
         private ContainerBagInterface $params, 
         private RequestStack $requestStack,
-        private EventDispatcherInterface $dispatcher,
         protected string $hashcashSalt = '' 
     ){
         if( $hashcashSalt == '' ){
