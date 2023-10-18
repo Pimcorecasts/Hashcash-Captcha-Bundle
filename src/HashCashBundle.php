@@ -7,7 +7,7 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 
 class HashCashBundle extends AbstractPimcoreBundle
 {
-    public function getVersion()
+    public function getVersion(): string
     {
         try{
             $version = \Composer\InstalledVersions::getVersion('pimcorecasts/hash-cash-captcha-bundle');
