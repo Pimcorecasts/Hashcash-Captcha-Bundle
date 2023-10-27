@@ -8,9 +8,11 @@
 namespace Pimcorecasts\Bundle\HashCash\Service;
 
 use Pimcore\Model\Tool\TmpStore;
+use Pimcorecasts\Bundle\HashCash\Event\HashCashInvalidEvent;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -68,6 +70,7 @@ class HashCashService
     public function __construct( 
         private ContainerBagInterface $params, 
         private RequestStack $requestStack,
+        private EventDispatcherInterface $dispatcher,
         protected string $hashcashSalt = '' 
     ){
         if( $hashcashSalt == '' ){
