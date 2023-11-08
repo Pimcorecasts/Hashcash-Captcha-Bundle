@@ -1,0 +1,5 @@
+_pimcorecasts_pchc:
+    resource: "@HashCashBundle/Controller/"
+    type:     annotation
+    options:
+        expose: true

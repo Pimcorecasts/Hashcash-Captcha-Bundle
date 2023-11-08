@@ -28,12 +28,18 @@ Pimcorecasts\Bundle\HashCash\HashCashBundle::class => [ 'all' => true ],
 ### 2. Add class to your `form` tag
 class: `.pchc-form`
 
-### 3. Add in your Form the HashCash inputs
+### 3.a Add in your Form the HashCash inputs
 ```php
 {% for inputKey, inputName in pc_hash_cash().createStamp() %}
     <input type="hidden" name="{{ inputKey }}" value="{{ inputName }}"></input>
 {% endfor %}
 ```
+
+### 3.b OR add ajax class to your `form` tag
+class: `.pchc-form-ajax`
+
+This will automatically add the input fields to your form via javascript and ajax request
+
 
 ### 4. Validate the Hash on Submit on the Server side
 Validate first your mandatory fields and at the end you can verify the hashCash.

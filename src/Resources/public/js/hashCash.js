@@ -225,6 +225,24 @@ var pimcorecastsHashCash = {
  * This searches the forms submit button and prevents the form submit until the test is done correct
  */
 window.addEventListener('load', (event) => {
+    var allAjaxForms = document.querySelectorAll('.pchc-form-ajax');
+    allAjaxForms.forEach((formElement) => {
+        fetch('/pchc/ajax/create-stamp').then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            for (const property in data) {
+                console.log(`${property}: ${data[property]}`);
+                console.log(formElement);
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = property;
+                input.value = data[property];
+                formElement.appendChild(input);
+            }
+        }).catch(function (err) {
+            console.log('Fetch Error :-S', err);
+        })
+    })
     var allForms = document.querySelectorAll('.pchc-form');
     allForms.forEach((formElement) => {
 

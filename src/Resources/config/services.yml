@@ -5,9 +5,13 @@ services:
         public: false
 
     # auto-register all controllers as services
+    Pimcorecasts\Bundle\HashCash\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: [ 'controller.service_arguments' ]
+
     Pimcorecasts\Bundle\HashCash\Service\HashCashService:
         public: true
-        tags: ['controller.service_arguments']
 
     # auto-register all controllers as services
     Pimcorecasts\Bundle\HashCash\Twig\HashCashTwigExtension:
