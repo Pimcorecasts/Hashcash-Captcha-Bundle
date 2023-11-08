@@ -230,7 +230,7 @@ window.addEventListener('load', (event) => {
         fetch('/pchc/ajax/create-stamp').then(function(response) {
             return response.json();
         }).then(function(data) {
-            for (const property in data) {´
+            for (const property in data) {
                 var input = document.createElement("input");
                 input.type = "hidden";
                 input.name = property;
