@@ -225,22 +225,6 @@ var pimcorecastsHashCash = {
  * This searches the forms submit button and prevents the form submit until the test is done correct
  */
 window.addEventListener('load', (event) => {
-    var allAjaxForms = document.querySelectorAll('.pchc-form-ajax');
-    allAjaxForms.forEach((formElement) => {
-        fetch('/pchc/ajax/create-stamp').then(function(response) {
-            return response.json();
-        }).then(function(data) {
-            for (const property in data) {
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = property;
-                input.value = data[property];
-                formElement.appendChild(input);
-            }
-        }).catch(function (err) {
-            console.log('Fetch Error :-S', err);
-        })
-    })
     var allForms = document.querySelectorAll('.pchc-form');
     allForms.forEach((formElement) => {
 
@@ -252,28 +236,65 @@ window.addEventListener('load', (event) => {
                 submitButtons.forEach( (el) => {
                     el.setAttribute('disabled', true)
                 } )
-
-                pimcorecastsHashCash.findHash(submittedForm).then( ( isValid ) => {
-                    var newAction = submittedForm.getAttribute('data-action')
-                    var hasActionAttr = submittedForm.hasAttribute('data-action')
-
-                    if (hasActionAttr) {
-                        submittedForm.action = newAction;
-                    }
-
-                    var customEvent = new CustomEvent('hashcashFormValid', {
-                        bubbles: true,
-                        detail: {
-                            valid: isValid,
-                            submitForm: true
+                if (formElement.classList.contains('js-elhc-form-ajax')) {
+                    fetch('/pchc/ajax/create-stamp?uri=' + encodeURI(location.href) + "&time=" + (new Date()).getTime()).then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        for (const property in data) {
+                            var input = document.createElement("input");
+                            input.type = "hidden";
+                            input.name = property;
+                            input.value = data[property];
+                            submittedForm.appendChild(input);
                         }
-                    })
-                    submittedForm.dispatchEvent(customEvent)
 
-                    if (customEvent.detail.submitForm && customEvent.detail.valid) {
-                        submittedForm.submit();
-                    }
-                } )
+                        elementsHashCash.findHash(submittedForm).then((isValid) => {
+                            let newAction = submittedForm.getAttribute('data-action')
+                            let hasActionAttr = submittedForm.hasAttribute('data-action')
+
+                            if (hasActionAttr) {
+                                submittedForm.action = newAction;
+                            }
+
+                            let customEvent = new CustomEvent('hashcashFormValid', {
+                                bubbles: true,
+                                detail: {
+                                    valid: isValid,
+                                    submitForm: true
+                                }
+                            })
+                            submittedForm.dispatchEvent(customEvent)
+
+                            if (customEvent.detail.submitForm && customEvent.detail.valid) {
+                                submittedForm.submit();
+                            }
+                        });
+                    }).catch(function (err) {
+                        console.log('Fetch Error :-S', err);
+                    })
+                } else {
+                    pimcorecastsHashCash.findHash(submittedForm).then( ( isValid ) => {
+                        var newAction = submittedForm.getAttribute('data-action')
+                        var hasActionAttr = submittedForm.hasAttribute('data-action')
+
+                        if (hasActionAttr) {
+                            submittedForm.action = newAction;
+                        }
+
+                        var customEvent = new CustomEvent('hashcashFormValid', {
+                            bubbles: true,
+                            detail: {
+                                valid: isValid,
+                                submitForm: true
+                            }
+                        })
+                        submittedForm.dispatchEvent(customEvent)
+
+                        if (customEvent.detail.submitForm && customEvent.detail.valid) {
+                            submittedForm.submit();
+                        }
+                    } )
+                }
 
             })
 
